@@ -16,6 +16,10 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
+    print(datetime.datetime.now())
+    time = discord.Game()
+    time.name = str(datetime.datetime.now())
+    await client.change_presence(game=time)
 
 
 @client.event
@@ -30,4 +34,4 @@ async def on_message(message: discord.Message):
             await client.send_message(message.channel, content="( ͡° ͜ʖ ͡°)")
 def main():
     client.run(discord_api_token)
-    client.change_status(game=str(datetime.datetime.now()))
+
