@@ -1,6 +1,7 @@
 import os
 import discord
 import datetime
+import random
 
 client = discord.Client()
 try:
@@ -33,6 +34,20 @@ async def on_message(message: discord.Message):
         if args[0] == "!lenny":
             await client.send_message(message.channel, content="( ͡° ͜ʖ ͡°)")
             await client.delete_message(message)
+        if args[0] == "!roll":
+            await roll(args[1], message)
+
+
+async def roll(dice: str, message: discord.Message):
+    """Rolls dice in NdN format."""
+    try:
+        rolls, limit = map(int, dice.split('d'))
+    except:
+        await client.send_message(message.channel, content="Format must be NdN! e.g. !roll 4d20")
+        return
+
+    result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
+    await client.send_message(message.channel, content=result)
 
 
 def main():
