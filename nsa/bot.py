@@ -51,6 +51,11 @@ async def roll(dice: str, message: discord.Message):
     await client.send_message(message.channel, content=result)
 
 
+async def logout():
+    await client.change_presence(game=None)
+    client.logout()
+
+
 def main():
     client.run(discord_api_token)
-    atexit.register(client.logout)
+    atexit.register(logout)
