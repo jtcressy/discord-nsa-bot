@@ -36,18 +36,23 @@ async def on_message(message: discord.Message):
             await client.send_message(message.channel, content="( ͡° ͜ʖ ͡°)")
             await client.delete_message(message)
         if args[0] == "!roll":
-            await roll(args[1], message)
+            await roll(args[1], message, args[2:])
 
 
-async def roll(dice: str, message: discord.Message):
+async def roll(dice: str, message: discord.Message, args: list):
     """Rolls dice in NdN format."""
     try:
         rolls, limit = map(int, dice.split('d'))
     except:
         await client.send_message(message.channel, content="Format must be NdN! e.g. !roll 4d20")
         return
-
-    result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
+    nums = list()
+    for r in range(rolls):
+        nums.append(random.randint(1, limit))
+    result = ', '.join(str(num) for num in nums)
+    if len(args) > 0 and args[0] == "avg":
+        avg = sum(nums) / len(nums)
+        result += "\nAverage: " + str(avg)
     await client.send_message(message.channel, content=result)
 
 
