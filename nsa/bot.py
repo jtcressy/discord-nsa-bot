@@ -19,6 +19,7 @@ async def on_ready():
     print(client.user.id)
     print('------')
     print(datetime.datetime.now())
+    await client.change_presence(game=None)
     time = discord.Game()
     time.name = str(datetime.datetime.now())
     await client.change_presence(game=time)
