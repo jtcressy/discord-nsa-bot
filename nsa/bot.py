@@ -24,7 +24,7 @@ async def on_message(message: discord.Message):
             await client.send_message(message.channel, content="Pong!")
         if args[0] == "!pong":
             await client.send_message(message.channel, content="Ping!")
-
-
+        if args[0] == "!lenny":
+            await.client.send_message(message.channel, content="( ͡° ͜ʖ ͡°)")
 def main():
     client.run(discord_api_token)
