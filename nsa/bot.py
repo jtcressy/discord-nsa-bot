@@ -32,6 +32,7 @@ async def on_message(message: discord.Message):
             await client.send_message(message.channel, content="Ping!")
         if args[0] == "!lenny":
             await client.send_message(message.channel, content="( ͡° ͜ʖ ͡°)")
+            await client.delete_message(message)
 
 
 def main():
