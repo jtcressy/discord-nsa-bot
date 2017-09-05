@@ -30,4 +30,4 @@ async def on_message(message: discord.Message):
             await client.send_message(message.channel, content="( ͡° ͜ʖ ͡°)")
 def main():
     client.run(discord_api_token)
-    client.change_status(game=datetime.datetime.now())
+    client.change_status(game=str(datetime.datetime.now()))
