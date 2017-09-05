@@ -2,6 +2,7 @@ import os
 import discord
 import datetime
 import random
+import atexit
 
 client = discord.Client()
 try:
@@ -52,4 +53,4 @@ async def roll(dice: str, message: discord.Message):
 
 def main():
     client.run(discord_api_token)
-
+    atexit.register(client.logout)
