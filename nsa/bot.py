@@ -1,4 +1,6 @@
-import os, discord
+import os
+import discord
+import datetime
 
 client = discord.Client()
 try:
@@ -28,3 +30,4 @@ async def on_message(message: discord.Message):
             await client.send_message(message.channel, content="( ͡° ͜ʖ ͡°)")
 def main():
     client.run(discord_api_token)
+    client.change_status(game=datetime.datetime.now())

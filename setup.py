@@ -4,6 +4,6 @@ setup(
         packages=['nsa'],
         include_package_data=True,
         install_requires=[
-            'discord.py'
+            'discord.py', 'discord'
         ],
 )
