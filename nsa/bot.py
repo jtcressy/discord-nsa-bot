@@ -29,6 +29,7 @@ async def on_ready():
     githead = discord.Game()
     githead.name = "HEAD: {} \n {}".format(commit, message)
     githead.url = "https://github.com/jtcressy/discord-nsa-bot/commit/{}".format(commit)
+    githead.type = 1
     print("HEAD: ", commit)
     print(message)
     await client.change_presence(game=githead)
