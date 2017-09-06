@@ -3,8 +3,10 @@ import discord
 import datetime
 import random
 import atexit
+from coinmarketcap import Market
 
 client = discord.Client()
+coinmarketcap = Market()
 try:
     discord_api_token = os.environ['DISCORD_API_TOKEN']
 except KeyError as err:
@@ -38,6 +40,46 @@ async def on_message(message: discord.Message):
             await client.delete_message(message)
         if args[0] == "!roll":
             await roll(args[1], message, args[2:])
+        if args[0] == "!crypto":
+            await crypto(args, message)
+
+
+async def crypto(args: list, message: discord.Message):
+    """Gets current price of a crypto currency, defaults to BTC/USD"""
+    usage = "usage: !crypto <BTC/ETH/LTC etc> [convert <USD/AUD/EUR/GBP etc.>]"
+    convert = str()
+    if "convert" in args:
+        idx = args.index("convert")
+        try:
+            convert = args[idx + 1]
+        except KeyError as e:
+            await client.send_message(message.channel, content=usage)
+    ticker = coinmarketcap.ticker(convert=convert)
+    embed = discord.Embed()
+    try:
+        symbol = args[1].upper()
+    except:
+        symbol = "BTC"
+    for currency in ticker:
+        if currency["symbol"] == symbol:
+            embed.title = currency["name"] + " Price Data"
+            embed.type = "rich"
+            unit = convert if len(convert) > 0 else "USD"
+            embed.description = """```
+   Current Price: {:,} {}
+      Market Cap: {:,} {}
+24H Trade Volume: {:,} {}
+    Last Updated: {} ```
+            """.format(
+                float(currency["price_" + unit.lower()]),
+                unit,
+                float(currency["market_cap_" + unit.lower()]),
+                unit,
+                float(currency["24h_volume_" + unit.lower()]),
+                unit,
+                datetime.datetime.fromtimestamp(int(currency["last_updated"]))
+            )
+    await client.send_message(message.channel, embed=embed)
 
 
 async def roll(dice: str, message: discord.Message, args: list):
