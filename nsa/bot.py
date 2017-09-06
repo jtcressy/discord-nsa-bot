@@ -16,7 +16,7 @@ except KeyError as err:
     print(err)
 
 if not discord.opus.is_loaded():
-    discord.opus.load_opus('opus')
+    discord.opus.load_opus()
 
 @client.event
 async def on_ready():
