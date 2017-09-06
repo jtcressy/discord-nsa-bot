@@ -58,15 +58,14 @@ async def on_message(message: discord.Message):
         if args[0] == "!crypto":
             await crypto(args, message)
         if args[0] == "!stop":
-            for voice in client.voice_clients:
-                if voice.channel == message.author.voice.voice_channel:
-                    voice.disconnect()
+            for voice in client.voice_client_in(message.server):
+                await voice.disconnect()
         if args[0] == "!ytdl":
             try:
                 await client.join_voice_channel(message.author.voice.voice_channel)
                 voices = (voice for voice in client.voice_clients if voice.channel == message.author.voice.voice_channel)
                 for voice in voices:
-                    player = await voice.create_ytdl_player(args[1], after=voice.disconnect)
+                    player = await voice.create_ytdl_player(args[1], after=player_final(voice))
                     player.start()
             except IndexError as e:
                 await client.send_message(message.channel, content="Gimme a link to play: !ytdl https://youtube.com/watch?v=<some video id>")
@@ -75,6 +74,10 @@ async def on_message(message: discord.Message):
         if args[0] == "!kys":
             await client.send_message(message.channel, content="Bye!")
             await client.logout()
+
+
+async def player_final(voice: discord.VoiceClient):
+    await voice.disconnect()
 
 
 async def crypto(args: list, message: discord.Message):
