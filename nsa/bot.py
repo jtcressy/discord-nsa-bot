@@ -57,20 +57,13 @@ async def on_message(message: discord.Message):
             await roll(args[1], message, args[2:])
         if args[0] == "!crypto":
             await crypto(args, message)
-        if args[0] == "!summon":
-            await client.join_voice_channel(message.author.voice.voice_channel)
-        if args[0] == "!leave":
-            for voice in client.voice_clients:
-                if voice.channel == message.author.voice.voice_channel:
-                    await voice.disconnect()
-                    break
+        if args[0] == "!stop":
+            (voice.disconnect() for voice in client.voice_clients if voice.channel == message.author.voice.voice_channel)
         if args[0] == "!ytdl":
             try:
+                client.join_voice_channel(message.author.voice.voice_channel)
                 voices = (voice for voice in client.voice_clients if voice.channel == message.author.voice.voice_channel)
                 for voice in voices:
-                    player = await voice.create_ytdl_player(args[1])
-                else:
-                    voice = client.join_voice_channel(message.author.voice.voice_channel)
                     player = await voice.create_ytdl_player(args[1])
                     player.start()
                     while True:
@@ -78,6 +71,8 @@ async def on_message(message: discord.Message):
                             await voice.disconnect()
             except IndexError as e:
                 await client.send_message(message.channel, content="Gimme a link to play: !ytdl https://youtube.com/watch?v=<some video id>")
+            except discord.errors.ClientException as e:
+                await client.send_message(message.channel, content=str(e))
         if args[0] == "!kys":
             await client.send_message(message.channel, content="Bye!")
             await client.logout()
