@@ -58,9 +58,9 @@ async def on_message(message: discord.Message):
         if args[0] == "!crypto":
             await crypto(args, message)
         if args[0] == "!stop":
-            voiceclient = (voice for voice in client.voice_clients if voice.channel == message.author.voice.voice_channel)
-            for voice in voiceclient:
-                voice.disconnect()
+            for voice in client.voice_clients:
+                if voice.channel == message.author.voice.voice_channel:
+                    voice.disconnect()
         if args[0] == "!ytdl":
             try:
                 await client.join_voice_channel(message.author.voice.voice_channel)
