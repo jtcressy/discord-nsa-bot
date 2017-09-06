@@ -129,7 +129,7 @@ async def roll(dice: str, message: discord.Message, args: list):
     result = ', '.join(str(num) for num in nums)
     if len(args) > 0 and args[0] == "avg":
         avg = sum(nums) / len(nums)
-        result += "\nAverage: " + str(avg)
+        result += "\nAverage: {:.2f}".format(avg)
     await client.send_message(message.channel, content=result)
 
 
