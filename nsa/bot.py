@@ -3,6 +3,7 @@ import discord
 import datetime
 import random
 import atexit
+from subprocess import Popen, PIPE
 from coinmarketcap import Market
 
 client = discord.Client()
@@ -20,11 +21,16 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
-    print(datetime.datetime.now())
+    p = Popen(["git", "log", "-1", "--oneline"], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    output, err = p.communicate(b"q")
+    commit = str(output)[2:-3].split(" ")[0]
+    message = " ".join(str(output)[2:-3].split(" ")[1:])
     await client.change_presence(game=None)
-    time = discord.Game()
-    time.name = str(datetime.datetime.now())
-    await client.change_presence(game=time)
+    githead = discord.Game()
+    githead.name = "HEAD: " + commit + "\n" + message
+    print("HEAD: ", commit)
+    print(message)
+    await client.change_presence(game=githead)
 
 
 @client.event
@@ -99,8 +105,7 @@ async def roll(dice: str, message: discord.Message, args: list):
     await client.send_message(message.channel, content=result)
 
 
-async def logout():
-    await client.change_presence(game=None)
+def logout():
     client.logout()
 
 
