@@ -66,12 +66,16 @@ async def on_message(message: discord.Message):
                     break
         if args[0] == "!ytdl":
             try:
-                for voice in client.voice_clients:
-                    if voice.channel == message.author.voice.voice_channel:
-                        player = await voice.create_ytdl_player(args[1])
-                        player.start()
-                        break
-                await client.send_message(message.channel, content="Join me to your channel first with !summon")
+                voices = (voice for voice in client.voice_clients if voice.channel == message.author.voice.voice_channel)
+                for voice in voices:
+                    player = await voice.create_ytdl_player(args[1])
+                else:
+                    voice = client.join_voice_channel(message.author.voice.voice_channel)
+                    player = await voice.create_ytdl_player(args[1])
+                    player.start()
+                    while True:
+                        if player.is_done():
+                            await voice.disconnect()
             except IndexError as e:
                 await client.send_message(message.channel, content="Gimme a link to play: !ytdl https://youtube.com/watch?v=<some video id>")
         if args[0] == "!kys":
