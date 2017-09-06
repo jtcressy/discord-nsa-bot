@@ -3,6 +3,7 @@ import discord
 import datetime
 import random
 import atexit
+import asyncio
 from subprocess import Popen, PIPE
 from coinmarketcap import Market
 
@@ -14,6 +15,8 @@ except KeyError as err:
     print("ERROR: API token required for Discord API via env var: DISCORD_API_TOKEN \n Details: \n")
     print(err)
 
+if not discord.opus.is_loaded():
+    discord.opus.load_opus('opus')
 
 @client.event
 async def on_ready():
@@ -38,6 +41,10 @@ async def on_ready():
 @client.event
 async def on_message(message: discord.Message):
     args = message.content.split()
+    if message.content == "good bot":
+        await client.send_message(message.channel, content="Good Human!")
+    if message.content == "bad bot":
+        await client.send_message(message.channel, content="Sorry, I don't take kindly to criticism.")
     if len(args) > 0:
         if args[0] == "!ping":
             await client.send_message(message.channel, content="Pong!")
@@ -50,6 +57,26 @@ async def on_message(message: discord.Message):
             await roll(args[1], message, args[2:])
         if args[0] == "!crypto":
             await crypto(args, message)
+        if args[0] == "!summon":
+            await client.join_voice_channel(message.author.voice.voice_channel)
+        if args[0] == "!leave":
+            for voice in client.voice_clients:
+                if voice.channel == message.author.voice.voice_channel:
+                    await voice.disconnect()
+                    break
+        if args[0] == "!ytdl":
+            try:
+                for voice in client.voice_clients:
+                    if voice.channel == message.author.voice.voice_channel:
+                        player = await voice.create_ytdl_player(args[1])
+                        player.start()
+                        break
+                await client.send_message(message.channel, content="Join me to your channel first with !summon")
+            except IndexError as e:
+                await client.send_message(message.channel, content="Gimme a link to play: !ytdl https://youtube.com/watch?v=<some video id>")
+        if args[0] == "!kys":
+            await client.send_message(message.channel, content="Bye!")
+            await client.logout()
 
 
 async def crypto(args: list, message: discord.Message):
@@ -108,9 +135,9 @@ async def roll(dice: str, message: discord.Message, args: list):
 
 
 def logout():
-    client.logout()
+    asyncio.get_event_loop().run_until_complete(client.logout())
 
 
 def main():
-    client.run(discord_api_token)
     atexit.register(logout)
+    client.run(discord_api_token)
