@@ -64,7 +64,7 @@ async def on_message(message: discord.Message):
                 await client.join_voice_channel(message.author.voice.voice_channel)
                 player = await client.voice_client_in(message.server).create_ytdl_player(args[1])
                 player.start()
-                player_final(message, player)
+                await player_final(message, player)
             except IndexError as e:
                 await client.send_message(message.channel, content="Gimme a link to play: !ytdl https://youtube.com/watch?v=<some video id>")
             except discord.errors.ClientException as e:
@@ -78,6 +78,7 @@ async def player_final(msg: discord.Message, player):
     while True:
         if player.is_done():
             await client.voice_client_in(msg.server).disconnect()
+            break
 
 
 async def crypto(args: list, message: discord.Message):
