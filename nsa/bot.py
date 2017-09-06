@@ -18,6 +18,7 @@ except KeyError as err:
 if not discord.opus.is_loaded():
     discord.opus.load_opus()
 
+
 @client.event
 async def on_ready():
     print('Logged in as')
@@ -58,13 +59,12 @@ async def on_message(message: discord.Message):
         if args[0] == "!crypto":
             await crypto(args, message)
         if args[0] == "!stop":
-            await client.voice_client_in(message.server).disconnect()
+            player_final(message)
         if args[0] == "!ytdl":
             try:
                 await client.join_voice_channel(message.author.voice.voice_channel)
-                player = await client.voice_client_in(message.server).create_ytdl_player(args[1])
+                player = await client.voice_client_in(message.server).create_ytdl_player(args[1], after=lambda: player_final(message))
                 player.start()
-                await player_final(message, player)
             except IndexError as e:
                 await client.send_message(message.channel, content="Gimme a link to play: !ytdl https://youtube.com/watch?v=<some video id>")
             except discord.errors.ClientException as e:
@@ -74,11 +74,13 @@ async def on_message(message: discord.Message):
             await client.logout()
 
 
-async def player_final(msg: discord.Message, player):
-    while True:
-        if player.is_done():
-            await client.voice_client_in(msg.server).disconnect()
-            break
+def player_final(msg):
+    coro = client.voice_client_in(msg.server).disconnect()
+    fut = asyncio.run_coroutine_threadsafe(coro, client.loop)
+    try:
+        fut.result()
+    except:
+        pass
 
 
 async def crypto(args: list, message: discord.Message):
