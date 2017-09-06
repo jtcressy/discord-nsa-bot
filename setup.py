@@ -10,7 +10,5 @@ setup(
         'coinmarketcap',
         'PySocks',
         'PyNaCl',
-        'google-auth-oauthlib[tool]',
-        'google-assistant-sdk'
     ],
 )
