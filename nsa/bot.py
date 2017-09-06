@@ -62,10 +62,8 @@ async def on_message(message: discord.Message):
         if args[0] == "!ytdl":
             try:
                 await client.join_voice_channel(message.author.voice.voice_channel)
-                voices = (voice for voice in client.voice_clients if voice.channel == message.author.voice.voice_channel)
-                for voice in voices:
-                    player = await voice.create_ytdl_player(args[1], after=await player_final(message))
-                    player.start()
+                player = await client.voice_client_in(message.server).create_ytdl_player(args[1], after=await player_final(message))
+                player.start()
             except IndexError as e:
                 await client.send_message(message.channel, content="Gimme a link to play: !ytdl https://youtube.com/watch?v=<some video id>")
             except discord.errors.ClientException as e:
