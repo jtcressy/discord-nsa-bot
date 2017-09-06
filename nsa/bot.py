@@ -61,7 +61,7 @@ async def on_message(message: discord.Message):
             (voice.disconnect() for voice in client.voice_clients if voice.channel == message.author.voice.voice_channel)
         if args[0] == "!ytdl":
             try:
-                client.join_voice_channel(message.author.voice.voice_channel)
+                await client.join_voice_channel(message.author.voice.voice_channel)
                 voices = (voice for voice in client.voice_clients if voice.channel == message.author.voice.voice_channel)
                 for voice in voices:
                     player = await voice.create_ytdl_player(args[1])
