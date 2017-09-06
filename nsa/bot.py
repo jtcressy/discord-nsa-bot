@@ -59,11 +59,11 @@ async def on_message(message: discord.Message):
         if args[0] == "!crypto":
             await crypto(args, message)
         if args[0] == "!stop":
-            player_final(message)
+            await player_final(message)
         if args[0] == "!ytdl":
             try:
                 await client.join_voice_channel(message.author.voice.voice_channel)
-                player = await client.voice_client_in(message.server).create_ytdl_player(args[1], after=lambda: player_final(message))
+                player = await client.voice_client_in(message.server).create_ytdl_player(args[1], after=lambda: await player_final(message))
                 player.start()
             except IndexError as e:
                 await client.send_message(message.channel, content="Gimme a link to play: !ytdl https://youtube.com/watch?v=<some video id>")
@@ -74,13 +74,8 @@ async def on_message(message: discord.Message):
             await client.logout()
 
 
-def player_final(msg):
-    coro = client.voice_client_in(msg.server).disconnect()
-    fut = asyncio.run_coroutine_threadsafe(coro, client.loop)
-    try:
-        fut.result()
-    except:
-        pass
+async def player_final(msg):
+    await client.voice_client_in(msg.server).disconnect()
 
 
 async def crypto(args: list, message: discord.Message):
