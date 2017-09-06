@@ -8,7 +8,5 @@ setup(
         'youtube_dl',
         'discord',
         'coinmarketcap',
-        'PySocks',
-        'PyNaCl',
     ],
 )
