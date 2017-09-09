@@ -21,6 +21,12 @@ except KeyError as err:
     debug = False
     pass
 
+try:
+    owner_id = os.environ['BOT_OWNER_ID']
+except KeyError as e:
+    print("WARN: Bot does not know the ID of the user maintaining this bot. Set it using an environment variable 'BOT_OWNER_ID'.")
+    pass
+
 if not discord.opus.is_loaded():
     discord.opus.load_opus()
 
@@ -49,7 +55,9 @@ async def on_ready():
 async def on_message(message: discord.Message):
     args = message.content.split()
     if debug:
-        print(message.author, message.content)
+        print(message.server, message.author, message.content)
+        print(type(message.server), type(message.author), type(message.content))
+        discord.server.Server.id
     if message.content == "good bot":
         await client.send_message(message.channel, content="Good Human!")
     if message.content == "bad bot":
@@ -85,8 +93,9 @@ async def on_message(message: discord.Message):
             except discord.errors.ClientException as e:
                 await client.send_message(message.channel, content=str(e))
         if args[0] == "!kys":
-            await client.send_message(message.channel, content="Bye!")
-            await client.logout()
+            if message.author.id == owner_id:  # only allow current bot maintainer to kill the bot
+                await client.send_message(message.channel, content="Bye!")
+                await client.logout()
 
 
 async def player_final(msg):
