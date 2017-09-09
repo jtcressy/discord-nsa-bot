@@ -48,7 +48,8 @@ async def on_ready():
     githead.type = 1
     print("HEAD: ", commit)
     print(message)
-    await client.change_presence(game=githead)
+    if debug:  # Don't show current git commit if not in debug mode. Cleaner presentation on multiple servers.
+        await client.change_presence(game=githead)
 
 
 @client.event
