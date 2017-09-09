@@ -26,6 +26,6 @@ opus to work for voice client stuff. This would be the builder image for use on 
 
 The ``:latest`` tag will be a fully installed bot so that you should be able to do
 
-``docker run -dit -e DISCORD_API_TOKEN=<api token> quay.io/jtcress/discord-nsa-bot``
+``docker run -dit -e DISCORD_API_TOKEN=<api token> quay.io/jtcressy/discord-nsa-bot``
 
 to run the bot inside a normal container.
