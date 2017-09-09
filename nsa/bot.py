@@ -15,6 +15,12 @@ except KeyError as err:
     print("ERROR: API token required for Discord API via env var: DISCORD_API_TOKEN \n Details: \n")
     print(err)
 
+try:
+    debug = bool(os.environ['DEBUG'])
+except KeyError as err:
+    debug = False
+    pass
+
 if not discord.opus.is_loaded():
     discord.opus.load_opus()
 
@@ -42,11 +48,19 @@ async def on_ready():
 @client.event
 async def on_message(message: discord.Message):
     args = message.content.split()
+    if debug:
+        print(message.author, message.content)
     if message.content == "good bot":
         await client.send_message(message.channel, content="Good Human!")
     if message.content == "bad bot":
         await client.send_message(message.channel, content="Sorry, I don't take kindly to criticism.")
     if len(args) > 0:
+        if args[0] == "!🅱opy🅱asta":
+            copypasta = """
+:b:hat :b:he :b:uck :b:id :b:ou :b:ust :b:ucking :b:ay :b:bout :b:e, :b:ou :b:ittle :b:itch? :b:’ll :b:ave :b:ou :b:now :b: :b:raduated :b:op :b:f :b:y :b:lass :b:n :b:he :b:avy :b:eals, :b:nd :b:’ve :b:een :b:nvolved :b:n :b:umerous :b:ecret :b:aids :b:n :b:l-:b:uaeda, :b:nd :b: :b:ave :b:ver :b:00 :b:onfirmed :b:ills. :b: :b:m :b:rained :b:n :b:orilla :b:arfare :b:nd :b:’m :b:he :b:op :b:niper :b:n :b:he :b:ntire :b:S :b:rmed :b:orces. :b:ou :b:re :b:othing :b:o :b:e :b:ut :b:ust :b:nother :b:arget. :b: :b:ill :b:ipe :b:ou :b:he :b:uck :b:ut :b:ith :b:recision :b:he :b:ikes :b:f :b:hich :b:as :b:ever :b:een :b:een :b:efore :b:n :b:his :b:arth, :b:ark :b:y :b:ucking :b:ords. :b:ou :b:hink :b:ou :b:an :b:et :b:way :b:ith :b:aying :b:hat :b:hit :b:o :b:e :b:ver :b:he :b:nternet? :b:hink :b:gain, :b:ucker. :b:s :b:e :b:peak :b: :b:m :b:ontacting :b:y :b:ecret :b:etwork :b:f :b:pies :b:cross :b:he :b:SA :b:nd :b:our :b:P :b:s :b:eing :b:raced :b:ight :b:ow :b:o :b:ou :b:etter :b:repare :b:or :b:he :b:torm, :b:aggot. :b:he :b:torm :b:hat :b:ipes :b:ut :b:he :b:athetic :b:ittle :b:hing :b:ou :b:all :b:our :b:ife. :b:ou’re :b:ucking :b:ead, :b:id. :b: :b:an :b:e :b:nywhere, :b:nytime, :b:nd :b: :b:an :b:ill :b:ou :b:n :b:ver :b:even :b:undred :b:ays, :b:nd :b:hat’s :b:ust :b:ith :b:y :b:are :b:ands. :b:ot :b:nly :b:m :b: :b:xtensively :b:rained :b:n :b:narmed :b:ombat, :b:ut :b: :b:ave :b:ccess :b:o :b:he :b:ntire :b:rsenal :b:f :b:he :b:nited :b:tates :b:arine :b:orps :b:nd :b: :b:ill :b:se :b:t :b:o :b:ts :b:ull :b:xtent :b:o :b:ipe :b:our :b:iserable :b:ss :b:ff :b:he :b:ace :b:f :b:he :b:ontinent, :b:ou :b:ittle :b:hit. :b:f :b:nly :b:ou :b:ould :b:ave :b:nown :b:hat :b:nholy :b:etribution :b:our :b:ittle “:b:lever” :b:omment :b:as :b:bout :b:o :b:ring :b:own :b:pon :b:ou, :b:aybe :b:ou :b:ould :b:ave :b:eld :b:our :b:ucking :b:ongue. :b:ut :b:ou :b:ouldn’t, :b:ou :b:idn’t, :b:nd :b:ow :b:ou’re :b:aying :b:he :b:rice, :b:ou :b:oddamn :b:diot. :b: :b:ill :b:hit :b:ury :b:ll :b:ver :b:ou :b:nd :b:ou :b:ill :b:rown :b:n :b:t. :b:ou’re :b:ucking :b:ead, :b:iddo.
+            """
+            await client.send_message(message.channel, content=copypasta[0:1999])
+            await client.send_message(message.channel, content=copypasta[2000:])
         if args[0] == "!ping":
             await client.send_message(message.channel, content="Pong!")
         if args[0] == "!pong":
