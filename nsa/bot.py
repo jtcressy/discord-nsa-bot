@@ -106,6 +106,8 @@ async def on_message(message: discord.Message):
                 await client.send_message(message.author, content="The invite is invalid or expired. Create a new instant invite and try again.")
             except discord.Forbidden as e:
                 await client.send_message(message.author, content="Discord didn't allow me to join the server at that invite. Contact {} for help.".format(client.get_user_info(owner_id).mention))
+            except IndexError as e:
+                await client.send_message(message.author, content="Send me a message with the invite link, like this: ``!invite http://discord.gg/<ID here>``")
 
 
 async def player_final(msg):
