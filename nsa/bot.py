@@ -97,6 +97,15 @@ async def on_message(message: discord.Message):
             if message.author.id == owner_id:  # only allow current bot maintainer to kill the bot
                 await client.send_message(message.channel, content="Bye!")
                 await client.logout()
+        if args[0] == "!invite":
+            try:
+                await client.accept_invite(args[1])
+            except discord.HTTPException as e:
+                await client.send_message(message.author, content="Accepting invite failed. Contact {} for help.".format(client.get_user_info(owner_id).mention))
+            except discord.NotFound as e:
+                await client.send_message(message.author, content="The invite is invalid or expired. Create a new instant invite and try again.")
+            except discord.Forbidden as e:
+                await client.send_message(message.author, content="Discord didn't allow me to join the server at that invite. Contact {} for help.".format(client.get_user_info(owner_id).mention))
 
 
 async def player_final(msg):
