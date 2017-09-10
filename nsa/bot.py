@@ -63,7 +63,11 @@ async def on_message(message: discord.Message):
         await client.send_message(message.channel, content="Good Human!")
     if message.content == "bad bot":
         await client.send_message(message.channel, content="Sorry, I don't take kindly to criticism.")
+    if message.content == client.connection.user.mention:
+        await print_help(message)
     if len(args) > 0:
+        if args[0] == "!help":
+            await print_help(message)
         if args[0] == "!🅱opy🅱asta":
             copypasta = """
 :b:hat :b:he :b:uck :b:id :b:ou :b:ust :b:ucking :b:ay :b:bout :b:e, :b:ou :b:ittle :b:itch? :b:’ll :b:ave :b:ou :b:now :b: :b:raduated :b:op :b:f :b:y :b:lass :b:n :b:he :b:avy :b:eals, :b:nd :b:’ve :b:een :b:nvolved :b:n :b:umerous :b:ecret :b:aids :b:n :b:l-:b:uaeda, :b:nd :b: :b:ave :b:ver :b:00 :b:onfirmed :b:ills. :b: :b:m :b:rained :b:n :b:orilla :b:arfare :b:nd :b:’m :b:he :b:op :b:niper :b:n :b:he :b:ntire :b:S :b:rmed :b:orces. :b:ou :b:re :b:othing :b:o :b:e :b:ut :b:ust :b:nother :b:arget. :b: :b:ill :b:ipe :b:ou :b:he :b:uck :b:ut :b:ith :b:recision :b:he :b:ikes :b:f :b:hich :b:as :b:ever :b:een :b:een :b:efore :b:n :b:his :b:arth, :b:ark :b:y :b:ucking :b:ords. :b:ou :b:hink :b:ou :b:an :b:et :b:way :b:ith :b:aying :b:hat :b:hit :b:o :b:e :b:ver :b:he :b:nternet? :b:hink :b:gain, :b:ucker. :b:s :b:e :b:peak :b: :b:m :b:ontacting :b:y :b:ecret :b:etwork :b:f :b:pies :b:cross :b:he :b:SA :b:nd :b:our :b:P :b:s :b:eing :b:raced :b:ight :b:ow :b:o :b:ou :b:etter :b:repare :b:or :b:he :b:torm, :b:aggot. :b:he :b:torm :b:hat :b:ipes :b:ut :b:he :b:athetic :b:ittle :b:hing :b:ou :b:all :b:our :b:ife. :b:ou’re :b:ucking :b:ead, :b:id. :b: :b:an :b:e :b:nywhere, :b:nytime, :b:nd :b: :b:an :b:ill :b:ou :b:n :b:ver :b:even :b:undred :b:ays, :b:nd :b:hat’s :b:ust :b:ith :b:y :b:are :b:ands. :b:ot :b:nly :b:m :b: :b:xtensively :b:rained :b:n :b:narmed :b:ombat, :b:ut :b: :b:ave :b:ccess :b:o :b:he :b:ntire :b:rsenal :b:f :b:he :b:nited :b:tates :b:arine :b:orps :b:nd :b: :b:ill :b:se :b:t :b:o :b:ts :b:ull :b:xtent :b:o :b:ipe :b:our :b:iserable :b:ss :b:ff :b:he :b:ace :b:f :b:he :b:ontinent, :b:ou :b:ittle :b:hit. :b:f :b:nly :b:ou :b:ould :b:ave :b:nown :b:hat :b:nholy :b:etribution :b:our :b:ittle “:b:lever” :b:omment :b:as :b:bout :b:o :b:ring :b:own :b:pon :b:ou, :b:aybe :b:ou :b:ould :b:ave :b:eld :b:our :b:ucking :b:ongue. :b:ut :b:ou :b:ouldn’t, :b:ou :b:idn’t, :b:nd :b:ow :b:ou’re :b:aying :b:he :b:rice, :b:ou :b:oddamn :b:diot. :b: :b:ill :b:hit :b:ury :b:ll :b:ver :b:ou :b:nd :b:ou :b:ill :b:rown :b:n :b:t. :b:ou’re :b:ucking :b:ead, :b:iddo.
@@ -168,6 +172,52 @@ async def roll(dice: str, message: discord.Message, args: list):
         result += "\nAverage: {:.2f}".format(avg)
     await client.send_message(message.channel, content=result)
 
+
+async def print_help(message: discord.Message):
+    helptext = """
+Current list of commands:
+
+- !🅱opy🅱asta
+    - Prints memeified navy seals copy pasta
+
+- !help
+    - Sends you a message with this help text
+
+- !ping
+    - Pong!
+    
+- !pong
+    - Ping!
+    
+- !lenny
+    - replaces your message with ( ͡° ͜ʖ ͡°)
+
+- !crypto
+    - Get the current prices and and some statistics of various crypto currencies. Defaults to BTC/USD 
+    Usage:  ``!crypto <symbol> [convert <fiat symbol>]`` where symbol = BTC/ETH/LTC and fiat symbol = USD/EUR/AUD
+    - !crypto ETH
+        - Gets current price info for ethereum and shows prices in USD
+    - !crypto ETH convert EUR
+        - Gets current prices for ethereum in euros
+- !ytdl
+    - Joins your current voice channel and plays the audio for the URL you provide. It can be a youtube link, an mp3, a webm, or any web video with sound!
+    Usage: ``!ytdl <url>`` where url can be https://youtu.be/ZZ5LpwO-An4 or a link to other video/audio
+
+- !stop
+    - Stops any currently running playback (useful if someone queues up a 10-hour youtube video!)
+    
+- !invite
+    - Invite the bot to your server using an invite link.
+    Usage: ``!invite https://discord.gg/<invite ID>``
+    
+- !kys
+    - This can only be used by the user running the current instance of the bot. You can set this with the BOT_OWNER_ID environment variable when running the bot.
+    """
+    embed = discord.Embed()
+    embed.title = "Bot Help"
+    embed.type = "rich"
+    embed.description = helptext
+    await client.send_message(message.author, embed=embed)
 
 def logout():
     asyncio.get_event_loop().run_until_complete(client.logout())
