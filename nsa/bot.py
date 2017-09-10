@@ -102,16 +102,8 @@ async def on_message(message: discord.Message):
                 await client.send_message(message.channel, content="Bye!")
                 await client.logout()
         if args[0] == "!invite":
-            try:
-                await client.accept_invite(args[1])
-            except discord.HTTPException as e:
-                await client.send_message(message.author, content="Accepting invite failed. Contact {} for help.".format(client.get_user_info(owner_id).mention))
-            except discord.NotFound as e:
-                await client.send_message(message.author, content="The invite is invalid or expired. Create a new instant invite and try again.")
-            except discord.Forbidden as e:
-                await client.send_message(message.author, content="Discord didn't allow me to join the server at that invite. Contact {} for help.".format(client.get_user_info(owner_id).mention))
-            except IndexError as e:
-                await client.send_message(message.author, content="Send me a message with the invite link, like this: ``!invite http://discord.gg/<ID here>``")
+            invitelink = "https://discordapp.com/oauth2/authorize?client_id={}&scope=bot&permissions=36727814".format(client.connection.user.id)
+            await client.send_message(message.channel, content="Use this to authorize me to join your server: {}".format(invitelink))
 
 
 async def player_final(msg):
@@ -207,8 +199,7 @@ Current list of commands:
     - Stops any currently running playback (useful if someone queues up a 10-hour youtube video!)
     
 - !invite
-    - Invite the bot to your server using an invite link.
-    Usage: ``!invite https://discord.gg/<invite ID>``
+    - The bot will reply with an oauth2 authorization link so that you can give it permissions to join your server.
     
 - !kys
     - This can only be used by the user running the current instance of the bot. You can set this with the BOT_OWNER_ID environment variable when running the bot.
