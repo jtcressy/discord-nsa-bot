@@ -104,6 +104,8 @@ async def on_message(message: discord.Message):
         if args[0] == "!invite":
             invitelink = "https://discordapp.com/oauth2/authorize?client_id={}&scope=bot&permissions=36727814".format(client.connection.user.id)
             await client.send_message(message.channel, content="Use this to authorize me to join your server: {}".format(invitelink))
+        if args[0] == "!git":
+            await client.send_message(message.channel, content="My github is https://github.com/jtcressy/discord-nsa-bot")
 
 
 async def player_final(msg):
@@ -168,6 +170,8 @@ async def roll(dice: str, message: discord.Message, args: list):
 async def print_help(message: discord.Message):
     helptext = """
 Current list of commands:
+- !git
+    - My github is https://github.com/jtcressy/discord-nsa-bot
 
 - !🅱opy🅱asta
     - Prints memeified navy seals copy pasta
