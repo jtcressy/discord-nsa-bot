@@ -4,6 +4,7 @@ import datetime
 import random
 import atexit
 import asyncio
+import urllib
 from subprocess import Popen, PIPE
 from coinmarketcap import Market
 
@@ -50,6 +51,15 @@ async def on_ready():
     print(message)
     if debug:  # Don't show current git commit if not in debug mode. Cleaner presentation on multiple servers.
         await client.change_presence(game=githead)
+        print("Currently joined servers: {}".format(" ".join([x.name for x in client.servers])))
+    for server in client.servers:
+        emojis = [x for x in server.emojis if x.name == "communism"]
+        if len(emojis) == 0:
+            try:
+                await client.create_custom_emoji(server, name="communism", image=urllib.request.urlopen("https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Hammer_and_sickle_red_on_transparent.svg/240px-Hammer_and_sickle_red_on_transparent.svg.png").read())
+            except:
+                print("Could not create communism emoji on server {0.name}, with id {0.id}".format(server))
+
 
 
 @client.event
@@ -58,7 +68,10 @@ async def on_message(message: discord.Message):
     if debug:
         print(message.server, message.author, message.content)
         print(type(message.server), type(message.author), type(message.content))
-        discord.server.Server.id
+    if "communis" in message.embeds or "communis" in message.content:
+        for emoji in message.server.emojis:
+            if emoji.name == "communism":
+                await client.add_reaction(message, emoji)
     if message.content == "good bot":
         await client.send_message(message.channel, content="Good Human!")
     if message.content == "bad bot":
@@ -88,6 +101,7 @@ async def on_message(message: discord.Message):
         if args[0] == "!stop":
             await player_final(message)
         if args[0] == "!ytdl":
+
             try:
                 await client.join_voice_channel(message.author.voice.voice_channel)
                 player = await client.voice_client_in(message.server).create_ytdl_player(args[1], after=lambda: asyncio.run_coroutine_threadsafe(player_final(message), client.loop))
