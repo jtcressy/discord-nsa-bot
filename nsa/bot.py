@@ -79,6 +79,7 @@ async def on_message(message: discord.Message):
     if message.content == client.connection.user.mention:
         await print_help(message)
     if len(args) > 0:
+        args[0] = str.lower(args[0])
         if args[0] == "!help":
             await print_help(message)
         if args[0] == "!🅱opy🅱asta":
@@ -94,6 +95,8 @@ async def on_message(message: discord.Message):
         if args[0] == "!lenny":
             await client.send_message(message.channel, content="( ͡° ͜ʖ ͡°)")
             await client.delete_message(message)
+        if args[0] == "!costanza"
+            await client.send_message(message.channel, content="http://i0.kym-cdn.com/entries/icons/original/000/005/498/1300044776986.jpg")
         if args[0] == "!roll":
             await roll(args[1], message, args[2:])
         if args[0] == "!crypto":
