@@ -1,7 +1,10 @@
 FROM centos/python-35-centos7
 
 USER root
-RUN yum upgrade python3 -y
+RUN yum install -y https://centos7.iuscommunity.org/ius-release.rpm && \
+	yum update -y && \
+	yum install python36u python36u-libs python36u-devel python36u-pip -y && \
+	ln -s /usr/bin/python3.6m /usr/bin/python3
 RUN yum install opus -y && \
     yum install epel-release -y && \
     rpm --import http://li.nux.ro/download/nux/RPM-GPG-KEY-nux.ro && \
