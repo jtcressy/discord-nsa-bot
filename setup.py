@@ -7,6 +7,7 @@ setup(
         'discord.py[voice]',
         'youtube_dl',
         'discord',
+        'requests-cache',
         'coinmarketcap',
     ],
 )
