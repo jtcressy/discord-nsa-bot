@@ -7,6 +7,6 @@ setup(
         'discord.py[voice]',
         'youtube_dl',
         'discord',
-        'coinmarketcap',
+        'coinmarketcap==3.0',
     ],
 )
