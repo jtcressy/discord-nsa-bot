@@ -139,12 +139,15 @@ async def on_message(message: discord.Message):
             await client.send_message(message.channel, embed=GitInfo().embed())
         if args[0] == "!wumboji" or args[0] == "!emoji":
             if len(args) > 1:
-                for emoji in message.server.emojis:
-                    if emoji.name == args[1]:
-                        await client.delete_message(message)
+                await client.delete_message(message)
+                for emoji in client.get_all_emojis():
+                    if args[1] == "#all" and message.author.id == owner_id:
+                        url = "https://cdn.discordapp.com/emojis/{id}.png".format(id=emoji.id)
+                        await client.send_message(message.channel, content="{} From Server: {}".format(emoji.name, emoji.server.name), embed=discord.Embed().set_image(url=url))
+                    elif emoji.name == args[1] or emoji == args[1]:
                         url = "https://cdn.discordapp.com/emojis/{id}.png".format(id=emoji.id)
                         await client.send_message(message.channel, embed=discord.Embed().set_image(url=url))
-
+                        break
 
 
 async def player_final(msg):
