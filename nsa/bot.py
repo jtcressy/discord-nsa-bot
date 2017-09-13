@@ -42,9 +42,14 @@ async def on_ready():
     githead = GitInfo()
     print("HEAD: ", githead.commit)
     print(githead.message)
+    webhook_url = "https://discordapp.com/api/webhooks/357390052529274894/aGSOKM_Mc2PH8-osFPXgwZQly8Plji6uM38qCriRPus7H2R05cpIRYEDpIsvDIhZTBIS"
+    webhook_data = b"""{ "embeds": [{"title": "NSA Bot Started", "description": "NSA Bot Finished Starting Up"}] }"""
+    webhook_headers = {"Accept": "application/json", "Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
+    req = urllib.request.Request(webhook_url, webhook_data, webhook_headers)
+    urllib.request.urlopen(req)
     if debug:  # Don't show current git commit if not in debug mode. Cleaner presentation on multiple servers.
-        await client.change_presence(game=githead.embed())
-        print("Currently joined servers: {}".format(" ".join([x.name for x in client.servers])))
+        await client.change_presence(game=githead.game())
+        print("Currently joined servers: {}".format(", ".join([x.name for x in client.servers])))
     for server in client.servers:
         emojis = [x for x in server.emojis if x.name == "communism"]
         if len(emojis) == 0:
@@ -89,11 +94,11 @@ async def on_message(message: discord.Message):
             await client.send_message(message.channel, content="( ͡° ͜ʖ ͡°)")
             await client.delete_message(message)
         if args[0] == "!costanza":
-            await client.send_message(message.channel, content="http://i0.kym-cdn.com/entries/icons/original/000/005/498/1300044776986.jpg")
+            await client.send_message(message.channel, embed=discord.Embed().set_image(url="http://i0.kym-cdn.com/entries/icons/original/000/005/498/1300044776986.jpg"))
         if args[0] == "!wut":
-            await client.send_message(message.channel, content="http://i0.kym-cdn.com/photos/images/original/000/548/129/538.jpg")
+            await client.send_message(message.channel, embed=discord.Embed().set_image(url="http://i0.kym-cdn.com/photos/images/original/000/548/129/538.jpg"))
         if args[0] == "!fine":
-            await client.send_message(message.channel, content="https://i.imgur.com/T1BawsP.gif")
+            await client.send_message(message.channel, embed=discord.Embed().set_image(url="https://i.imgur.com/T1BawsP.gif"))
         if args[0] == "!roll":
             await roll(args[1], message, args[2:])
         if args[0] == "!crypto":
@@ -101,7 +106,6 @@ async def on_message(message: discord.Message):
         if args[0] == "!stop":
             await player_final(message)
         if args[0] == "!ytdl":
-
             try:
                 await client.join_voice_channel(message.author.voice.voice_channel)
                 player = await client.voice_client_in(message.server).create_ytdl_player(args[1], after=lambda: asyncio.run_coroutine_threadsafe(player_final(message), client.loop))
@@ -120,6 +124,14 @@ async def on_message(message: discord.Message):
             await client.send_message(message.channel, content="Use this to authorize me to join your server: {}".format(invitelink))
         if args[0] == "!git":
             await client.send_message(message.channel, embed=GitInfo().embed())
+        if args[0] == "!wumboji" or args[0] == "!emoji":
+            if len(args) > 1:
+                for emoji in message.server.emojis:
+                    if emoji.name == args[1]:
+                        await client.delete_message(message)
+                        url = "https://cdn.discordapp.com/emojis/{id}.png".format(id=emoji.id)
+                        await client.send_message(message.channel, embed=discord.Embed().set_image(url=url))
+
 
 
 async def player_final(msg):
@@ -135,7 +147,7 @@ class GitInfo:
         self.url = "https://github.com/jtcressy/discord-nsa-bot/commit/{}".format(self.commit)
 
     def __get__(self) -> discord.Embed:
-        return self.embed(self)
+        return self.embed()
 
     def embed(self):
         output = discord.Embed()
@@ -143,6 +155,16 @@ class GitInfo:
         output.description = self.message
         output.url = self.url
         return output
+
+    def game(self):
+        embed = self.embed()
+        game = discord.Game()
+        game.url = embed.url
+        game.name = """
+HEAD: {}
+{}
+        """.format(embed.title, embed.description)
+        return game
 
 async def crypto(args: list, message: discord.Message):
     """Gets current price of a crypto currency, defaults to BTC/USD"""
