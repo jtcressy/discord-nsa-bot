@@ -5,6 +5,7 @@ import random
 import atexit
 import asyncio
 import urllib
+import json
 from subprocess import Popen, PIPE
 from coinmarketcap import Market
 
@@ -42,8 +43,20 @@ async def on_ready():
     githead = GitInfo()
     print("HEAD: ", githead.commit)
     print(githead.message)
-    webhook_url = "https://discordapp.com/api/webhooks/357390052529274894/aGSOKM_Mc2PH8-osFPXgwZQly8Plji6uM38qCriRPus7H2R05cpIRYEDpIsvDIhZTBIS"
-    webhook_data = b"""{ "embeds": [{"title": "NSA Bot Started", "description": "NSA Bot Finished Starting Up"}] }"""
+    webhook_url = "https://discordapp.com/api/webhooks/357222063280488449/8oA8XCwTQm6LsZ95_cNSdEfIQO2eCjDlLgJTcPo8qB9IpT0hc3kyhVxyKtVtHqOGQobQ"
+    webhook_data = bytes(
+        json.dumps({"embeds": [
+                        {
+                            "title": "NSA Bot Started",
+                            "description": "NSA Bot Finished Starting Up."
+                        },
+                        {
+                            "title": githead.commit,
+                            "description": githead.message,
+                            "url": githead.url
+                        }
+                    ]}), 'utf-8'
+    )
     webhook_headers = {"Accept": "application/json", "Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
     req = urllib.request.Request(webhook_url, webhook_data, webhook_headers)
     urllib.request.urlopen(req)
