@@ -97,6 +97,8 @@ async def on_message(message: discord.Message):
             await client.delete_message(message)
         if args[0] == "!costanza":
             await client.send_message(message.channel, content="http://i0.kym-cdn.com/entries/icons/original/000/005/498/1300044776986.jpg")
+        if args[0] == "!wut":
+            await client.send_message(message.channel, content="http://i0.kym-cdn.com/photos/images/original/000/548/129/538.jpg")
         if args[0] == "!roll":
             await roll(args[1], message, args[2:])
         if args[0] == "!crypto":
