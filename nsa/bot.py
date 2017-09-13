@@ -38,19 +38,12 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
-    p = Popen(["git", "log", "-1", "--oneline"], stdin=PIPE, stdout=PIPE, stderr=PIPE)
-    output, err = p.communicate(b"q")
-    commit = str(output)[2:-3].split(" ")[0]
-    message = " ".join(str(output)[2:-3].split(" ")[1:])
     await client.change_presence(game=None)
-    githead = discord.Game()
-    githead.name = "HEAD: {} \n {}".format(commit, message)
-    githead.url = "https://github.com/jtcressy/discord-nsa-bot/commit/{}".format(commit)
-    githead.type = 1
-    print("HEAD: ", commit)
-    print(message)
+    githead = GitInfo()
+    print("HEAD: ", githead.commit)
+    print(githead.message)
     if debug:  # Don't show current git commit if not in debug mode. Cleaner presentation on multiple servers.
-        await client.change_presence(game=githead)
+        await client.change_presence(game=githead.embed())
         print("Currently joined servers: {}".format(" ".join([x.name for x in client.servers])))
     for server in client.servers:
         emojis = [x for x in server.emojis if x.name == "communism"]
@@ -122,12 +115,30 @@ async def on_message(message: discord.Message):
             invitelink = "https://discordapp.com/oauth2/authorize?client_id={}&scope=bot&permissions=36727814".format(client.connection.user.id)
             await client.send_message(message.channel, content="Use this to authorize me to join your server: {}".format(invitelink))
         if args[0] == "!git":
-            await client.send_message(message.channel, content="My github is https://github.com/jtcressy/discord-nsa-bot")
+            await client.send_message(message.channel, embed=GitInfo().embed())
 
 
 async def player_final(msg):
     await client.voice_client_in(msg.server).disconnect()
 
+
+class GitInfo:
+    def __init__(self):
+        p = Popen(["git", "log", "-1", "--oneline"], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        output, err = p.communicate(b"q")
+        self.commit = str(output)[2:-3].split(" ")[0]
+        self.message = " ".join(str(output)[2:-3].split(" ")[1:])
+        self.url = "https://github.com/jtcressy/discord-nsa-bot/commit/{}".format(self.commit)
+
+    def __get__(self) -> discord.Embed:
+        return self.embed(self)
+
+    def embed(self):
+        output = discord.Embed()
+        output.title = self.commit
+        output.description = self.message
+        output.url = self.url
+        return output
 
 async def crypto(args: list, message: discord.Message):
     """Gets current price of a crypto currency, defaults to BTC/USD"""
