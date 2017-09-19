@@ -72,7 +72,6 @@ async def on_ready():
                 print("Could not create communism emoji on server {0.name}, with id {0.id}".format(server))
 
 
-
 @client.event
 async def on_message(message: discord.Message):
     args = message.content.split()
