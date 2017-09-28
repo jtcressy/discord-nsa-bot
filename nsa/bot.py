@@ -161,7 +161,7 @@ async def on_message(message: discord.Message):
                         await client.send_message(message.channel, embed=discord.Embed().set_image(url=url))
                         break
         if args[0] == "!ytdl":
-            db = dbclient[mongodb_db]
+            db = dbclient[os.environ['NSA_BOT_MONGODB_DB']]
             entries = db[message.server.id + "-ytdl"]
             if args[1] == "add":  # <name> <url>
                 entry = {
