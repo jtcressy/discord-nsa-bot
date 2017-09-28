@@ -36,6 +36,7 @@ try:
     mongodb_host = urllib.parse.quote_plus(os.environ['NSA_BOT_MONGODB_HOST'])
     mongodb_user = urllib.parse.quote_plus(os.environ['NSA_BOT_MONGODB_USER'])
     mongodb_pass = urllib.parse.quote_plus(os.environ['NSA_BOT_MONGODB_PASS'])
+    mongodb_db = urllib.parse.quote_plus(os.environ['NSA_BOT_MONGODB_DB'])
 except KeyError:
     print("ERROR: Mongodb information is required to startup. specify NSA_BOT_MONGODB_(HOST,USER,PASS) as env vars")
 
@@ -160,8 +161,8 @@ async def on_message(message: discord.Message):
                         await client.send_message(message.channel, embed=discord.Embed().set_image(url=url))
                         break
         if args[0] == "!ytdl":
-            db = dbclient.ytdldb
-            entries = db.entries  # todo: make this server-specific
+            db = dbclient[mongodb_db]
+            entries = db[message.server.id + "-ytdl"]
             if args[1] == "add":  # <name> <url>
                 entry = {
                     "name": args[2],
