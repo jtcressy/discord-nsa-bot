@@ -46,7 +46,7 @@ except KeyError:
     mongodb_port = 27017
     pass
 
-mongourl = "mongodb://{}:{}@{}:{}".format(mongodb_user,mongodb_pass,mongodb_host,mongodb_port)
+mongourl = "mongodb://{}:{}@{}:{}/{}".format(mongodb_user,mongodb_pass,mongodb_host,mongodb_port,mongodb_db)
 if debug:
     print(mongourl)
 dbclient = MongoClient(mongourl)
