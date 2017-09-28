@@ -8,5 +8,6 @@ setup(
         'youtube_dl',
         'discord',
         'coinmarketcap==3.0',
+        'pymongo'
     ],
 )

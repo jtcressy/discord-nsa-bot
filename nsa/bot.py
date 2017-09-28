@@ -8,6 +8,9 @@ import urllib
 import json
 from subprocess import Popen, PIPE
 from coinmarketcap import Market
+from pymongo import MongoClient
+from pymongo.errors import DuplicateKeyError
+import urllib.parse
 
 client = discord.Client()
 coinmarketcap = Market()
@@ -28,6 +31,24 @@ try:
 except KeyError as e:
     print("WARN: Bot does not know the ID of the user maintaining this bot. Set it using an environment variable 'BOT_OWNER_ID'.")
     pass
+
+try:
+    mongodb_host = urllib.parse.quote_plus(os.environ['NSA_BOT_MONGODB_HOST'])
+    mongodb_user = urllib.parse.quote_plus(os.environ['NSA_BOT_MONGODB_USER'])
+    mongodb_pass = urllib.parse.quote_plus(os.environ['NSA_BOT_MONGODB_PASS'])
+except KeyError:
+    print("ERROR: Mongodb information is required to startup. specify NSA_BOT_MONGODB_(HOST,USER,PASS) as env vars")
+
+try:
+    mongodb_port = int(os.environ['NSA_BOT_MONGODB_PORT'])
+except KeyError:
+    mongodb_port = 27017
+    pass
+
+mongourl = "mongodb://{}:{}@{}:{}".format(mongodb_user,mongodb_pass,mongodb_host,mongodb_port)
+if debug:
+    print(mongourl)
+dbclient = MongoClient(mongourl)
 
 if not discord.opus.is_loaded():
     discord.opus.load_opus()
@@ -117,16 +138,7 @@ async def on_message(message: discord.Message):
             await crypto(args, message)
         if args[0] == "!stop":
             await player_final(message)
-        if args[0] == "!ytdl":
-            try:
-                await client.join_voice_channel(message.author.voice.voice_channel)
-                player = await client.voice_client_in(message.server).create_ytdl_player(args[1], after=lambda: asyncio.run_coroutine_threadsafe(player_final(message), client.loop))
-                player.start()
-                player.volume = 0.25
-            except IndexError as e:
-                await client.send_message(message.channel, content="Gimme a link to play: !ytdl https://youtube.com/watch?v=<some video id>")
-            except discord.errors.ClientException as e:
-                await client.send_message(message.channel, content=str(e))
+
         if args[0] == "!kys":
             if message.author.id == owner_id:  # only allow current bot maintainer to kill the bot
                 await client.send_message(message.channel, content="Bye!")
@@ -147,7 +159,59 @@ async def on_message(message: discord.Message):
                         url = "https://cdn.discordapp.com/emojis/{id}.png".format(id=emoji.id)
                         await client.send_message(message.channel, embed=discord.Embed().set_image(url=url))
                         break
+        if args[0] == "!ytdl":
+            db = dbclient.ytdldb
+            entries = db.entries  # todo: make this server-specific
+            if args[1] == "add":  # <name> <url>
+                entry = {
+                    "name": args[2],
+                    "url": args[3]
+                }
+                try:
+                    entries.insert_one(entry)
+                except DuplicateKeyError:
+                    await client.send_message(message.channel, content="That name already exists")
+                else:
+                    await client.send_message(message.channel, content="Added {} to the database".format(args[2]))
+            elif args[1] == "del":  # <name>
+                result = entries.delete_one({"name": args[2]})
+                if result.deleted_count > 0:
+                    await client.send_message(message.channel, content="{} deleted successfully.".format(args[2]))
+                else:
+                    await client.send_message(message.channel, content="{} does not exist.".format(args[2]))
+            elif args[1] == "play":  # <name>
+                result = entries.find_one({"name": args[2]})
+                if result is not None:
+                    await ytdl(result.get("url"), message)
+            elif args[1] == "list":  # <no args>
+                result = entries.find()
+                if result is not None:
+                    output = discord.Embed()
+                    output.description = ""
+                    for item in result:
+                        output.description += "name: {} url: {}".format(item['name'], item['url'])
+                    await client.send_message(message.channel, embed=output)
+                else:
+                    await client.send_message(message.channel, content="No entries found on this server.")
+            else:
+                await ytdl(args[1], message)
 
+
+
+async def ytdl(url,message):
+    try:
+        await client.join_voice_channel(message.author.voice.voice_channel)
+        player = await client.voice_client_in(message.server).create_ytdl_player(url,
+                                                                                 after=lambda: asyncio.run_coroutine_threadsafe(
+                                                                                     player_final(message),
+                                                                                     client.loop))
+        player.start()
+        player.volume = 0.25
+    except IndexError as e:
+        await client.send_message(message.channel,
+                                  content="Gimme a link to play: !ytdl https://youtube.com/watch?v=<some video id>")
+    except discord.errors.ClientException as e:
+        await client.send_message(message.channel, content=str(e))
 
 async def player_final(msg):
     await client.voice_client_in(msg.server).disconnect()
