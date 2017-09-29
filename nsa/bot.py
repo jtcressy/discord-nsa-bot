@@ -187,7 +187,7 @@ async def on_message(message: discord.Message):
             elif args[1] == "list":  # <no args>
                 output = discord.Embed(title="List of audio clips on this server")
                 headers = ['*Name*', '*Url*']
-                row_format = "{:15}{:30}"
+                row_format = "{:15}{:30}\n"
                 output.description = row_format.format(*headers)
                 results = list(entries.find())
                 for row in results:
