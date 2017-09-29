@@ -188,10 +188,14 @@ async def on_message(message: discord.Message):
                 output = discord.Embed(title="List of audio clips on this server")
                 headers = ['*Name*', '*Url*']
                 row_format = "{:15}{:30}\n"
-                output.description = row_format.format(*headers)
+                names = list()
+                urls = list()
                 results = list(entries.find())
                 for row in results:
-                    output.description += row_format.format(row['name'], row['url'])
+                    names.append(row['name'])
+                    urls.append(row['url'])
+                output.add_field(name="**Name**", value="\n".join(names), inline=True)
+                output.add_field(name="**Url**", value="\n".join(urls), inline=True)
                 if len(results) > 0:
                     await client.send_message(message.channel, embed=output)
                 else:
