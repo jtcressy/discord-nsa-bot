@@ -130,7 +130,7 @@ async def on_message(message: discord.Message):
         if args[0] == "!costanza":
             if len(args) > 1:
                 if args[1] == "yes":
-                    await client.send_message(message.channel, embed=discord.Emoji().set_image(url="http://www.uncoached.com/wp-content/uploads/2014/11/george-costanza-jacket-1.jpg"))
+                    await client.send_message(message.channel, embed=discord.Embed().set_image(url="http://www.uncoached.com/wp-content/uploads/2014/11/george-costanza-jacket-1.jpg"))
                 elif args[1] == "no":
                     await client.send_message(message.channel, embed=discord.Embed().set_image(url="https://cdn.discordapp.com/attachments/345767795881017345/346075948900155394/ha_no.jpg"))
             else:
