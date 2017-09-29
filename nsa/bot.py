@@ -335,6 +335,11 @@ Current list of commands:
 - !ytdl
     - Joins your current voice channel and plays the audio for the URL you provide. It can be a youtube link, an mp3, a webm, or any web video with sound!
     Usage: ``!ytdl <url>`` where url can be https://youtu.be/ZZ5LpwO-An4 or a link to other video/audio
+    - Save URL's for later in a key:value store specific to the server
+        ``!ytdl add <name> <url>`` add an audio clip to your server's list
+        ``!ytdl del <name>`` delete an audio clip
+        ``!ytdl play <name>`` play an audio clip
+        ``!ytdl list`` get a list of all audio clips on the server
 
 - !stop
     - Stops any currently running playback (useful if someone queues up a 10-hour youtube video!)
