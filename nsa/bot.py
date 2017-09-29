@@ -189,9 +189,10 @@ async def on_message(message: discord.Message):
                 headers = ['*Name*', '*Url*']
                 row_format = "{:15}{:30}"
                 output.description = row_format.format(*headers)
-                for row in entries.find():
+                results = entries.find()
+                for row in results:
                     output.description += row_format.format(row['name'], row['url'])
-                if len(entries.find()) > 0:
+                if len(results) > 0:
                     await client.send_message(message.channel, embed=output)
                 else:
                     await client.send_message(message.channel, content="No audio clips found on this server.")
