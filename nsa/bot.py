@@ -189,7 +189,7 @@ async def on_message(message: discord.Message):
                 headers = ['*Name*', '*Url*']
                 row_format = "{:15}{:30}"
                 output.description = row_format.format(*headers)
-                results = entries.find()
+                results = list(entries.find())
                 for row in results:
                     output.description += row_format.format(row['name'], row['url'])
                 if len(results) > 0:
