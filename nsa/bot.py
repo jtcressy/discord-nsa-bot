@@ -185,34 +185,36 @@ async def on_message(message: discord.Message):
                 if result is not None:
                     await ytdl(result.get("url"), message)
             elif args[1] == "list":  # <no args>
-                result = entries.find()
-                if result is not None:
-                    output = discord.Embed()
-                    output.description = ""
-                    for item in result:
-                        output.description += "name: {} url: {}".format(item['name'], item['url'])
+                output = discord.Embed(title="List of audio clips on this server")
+                headers = ['*Name*', '*Url*']
+                row_format = "{:15}{:30}"
+                output.description = row_format.format(*headers)
+                for row in entries.find():
+                    output.description += row_format.format(row['name'], row['url'])
+                if len(entries.find()) > 0:
                     await client.send_message(message.channel, embed=output)
                 else:
-                    await client.send_message(message.channel, content="No entries found on this server.")
+                    await client.send_message(message.channel, content="No audio clips found on this server.")
             else:
                 await ytdl(args[1], message)
 
 
 
 async def ytdl(url,message):
-    try:
-        await client.join_voice_channel(message.author.voice.voice_channel)
-        player = await client.voice_client_in(message.server).create_ytdl_player(url,
-                                                                                 after=lambda: asyncio.run_coroutine_threadsafe(
-                                                                                     player_final(message),
-                                                                                     client.loop))
-        player.start()
-        player.volume = 0.25
-    except IndexError as e:
-        await client.send_message(message.channel,
-                                  content="Gimme a link to play: !ytdl https://youtube.com/watch?v=<some video id>")
-    except discord.errors.ClientException as e:
-        await client.send_message(message.channel, content=str(e))
+    result = urllib.parse.urlparse(url)
+    if bool(result.scheme):  # is a valid url
+        try:
+            await client.join_voice_channel(message.author.voice.voice_channel)
+            player = await client.voice_client_in(message.server).create_ytdl_player(url,
+                                                                                     after=lambda: asyncio.run_coroutine_threadsafe(
+                                                                                         player_final(message),
+                                                                                         client.loop))
+            player.start()
+            player.volume = 0.25
+        except discord.errors.ClientException as e:
+            await client.send_message(message.channel, content=str(e))
+    else:
+        await client.send_message(message.channel, content="Invalid URL: {}\n\nusage: ``!ytdl [ add | del | list | play <name> | <url> ]".format(url))
 
 async def player_final(msg):
     await client.voice_client_in(msg.server).disconnect()
