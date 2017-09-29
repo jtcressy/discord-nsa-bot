@@ -128,7 +128,13 @@ async def on_message(message: discord.Message):
             await client.send_message(message.channel, content="( ͡° ͜ʖ ͡°)")
             await client.delete_message(message)
         if args[0] == "!costanza":
-            await client.send_message(message.channel, embed=discord.Embed().set_image(url="http://i0.kym-cdn.com/entries/icons/original/000/005/498/1300044776986.jpg"))
+            if len(args) > 1:
+                if args[1] == "yes":
+                    await client.send_message(message.channel, embed=discord.Emoji().set_image(url="http://www.uncoached.com/wp-content/uploads/2014/11/george-costanza-jacket-1.jpg"))
+                elif args[1] == "no":
+                    await client.send_message(message.channel, embed=discord.Embed().set_image(url="https://cdn.discordapp.com/attachments/345767795881017345/346075948900155394/ha_no.jpg"))
+            else:
+                await client.send_message(message.channel, embed=discord.Embed().set_image(url="http://i0.kym-cdn.com/entries/icons/original/000/005/498/1300044776986.jpg"))
         if args[0] == "!wut":
             await client.send_message(message.channel, embed=discord.Embed().set_image(url="http://i0.kym-cdn.com/photos/images/original/000/548/129/538.jpg"))
         if args[0] == "!fine":
