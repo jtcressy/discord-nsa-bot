@@ -1,0 +1,3 @@
+import nsabot
+
+nsabot.run()

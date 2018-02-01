@@ -1,0 +1,6 @@
+discord.py[voice]
+youtube_dl
+coinmarketcap==3.0
+pymongo
+bs4
+selenium
