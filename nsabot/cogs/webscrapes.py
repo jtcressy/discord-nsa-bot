@@ -38,5 +38,6 @@ class WebScrapes:
             "div", class_="dotd-main-book-image float-left").find("img").attrs['src']
         return info
 
+
 def setup(bot):
     bot.add_cog(WebScrapes(bot))

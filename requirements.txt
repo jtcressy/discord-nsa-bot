@@ -4,3 +4,4 @@ coinmarketcap==3.0
 pymongo
 bs4
 selenium
+kubernetes
