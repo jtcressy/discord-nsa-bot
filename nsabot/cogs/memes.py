@@ -22,6 +22,7 @@ class Memes:
 
     @meme.command(name="save", pass_context=True)
     async def save(self, ctx, name, url):
+        """Save a meme to the database"""
         entries = self.db.get_collection(f"{ctx.message.server.id}-memes")
         entry = {
             'name': name,
