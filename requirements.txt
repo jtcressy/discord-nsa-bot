@@ -5,3 +5,4 @@ pymongo
 bs4
 selenium
 kubernetes
+tabulate
