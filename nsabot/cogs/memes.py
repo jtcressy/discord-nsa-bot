@@ -56,6 +56,7 @@ class Memes:
         if self.meme_entries.find_one({'name': entry.get('name')}):
             await self.bot.say("That name already exists in the meme list")
         else:
+            self.meme_entries.insert_one(entry)
             await self.bot.say(f"Saved {name} to the meme list. Use \meme {name} to recall the saved meme.")
 
     @commands.has_any_role("Admin", "Moderator")
